@@ -59,7 +59,7 @@ function DashboardPage() {
         {/* Welcome */}
         <section className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground flex items-center gap-3">
-            Welcome, {userName}!
+            Welcome back, {userName}! <span className="text-3xl">👋</span>
           </h1>
           <p className="text-muted-foreground mt-2">
             Here's what's happening with your files today.
