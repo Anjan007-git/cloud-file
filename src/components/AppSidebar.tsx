@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -6,13 +7,13 @@ import {
   Clock,
   Star,
   Trash2,
-  HardDrive,
   Settings,
   HelpCircle,
   LogOut,
   Cloud,
   ChevronDown,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const mainNav = [
   { title: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
@@ -28,6 +29,32 @@ export function AppSidebar() {
   const usedGb = 0;
   const totalGb = 200;
   const pct = (usedGb / totalGb) * 100;
+  const [user, setUser] = useState<{ name: string; email: string; avatar?: string } | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase.auth.getUser();
+      const u = data.user;
+      if (!u) { setUser(null); return; }
+      const meta = (u.user_metadata ?? {}) as Record<string, string>;
+      setUser({
+        name: meta.full_name || meta.name || u.email?.split("@")[0] || "User",
+        email: u.email ?? "",
+        avatar: meta.avatar_url,
+      });
+    };
+    load();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => load());
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const initials = (user?.name ?? "GU")
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
 
   return (
     <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-gradient-sidebar text-sidebar-foreground p-5 gap-5 sticky top-0 h-screen">
@@ -84,28 +111,44 @@ export function AppSidebar() {
       </div>
 
       <div className="mt-auto flex flex-col gap-3">
-        <div className="flex items-center gap-3 p-2 rounded-xl bg-white/10">
-          <div className="size-9 rounded-full bg-gradient-to-br from-aqua to-primary-glow grid place-items-center text-white font-bold text-sm">
-            AJ
-          </div>
-          <div className="flex-1 leading-tight min-w-0">
-            <div className="text-sm font-semibold truncate">Alex Johnson</div>
-            <div className="text-[11px] text-white/60 truncate">alex.johnson@mail.com</div>
-          </div>
-          <ChevronDown className="size-4 text-white/60" />
-        </div>
-        <div className="flex items-center justify-around border-t border-white/10 pt-3">
-          <Link to="/settings" className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10" aria-label="Settings">
-            <Settings className="size-[18px]" />
+        {user ? (
+          <>
+            <div className="flex items-center gap-3 p-2 rounded-xl bg-white/10">
+              {user.avatar ? (
+                <img src={user.avatar} alt="" className="size-9 rounded-full object-cover" />
+              ) : (
+                <div className="size-9 rounded-full bg-gradient-to-br from-aqua to-primary-glow grid place-items-center text-white font-bold text-sm">
+                  {initials}
+                </div>
+              )}
+              <div className="flex-1 leading-tight min-w-0">
+                <div className="text-sm font-semibold truncate">{user.name}</div>
+                <div className="text-[11px] text-white/60 truncate">{user.email}</div>
+              </div>
+              <ChevronDown className="size-4 text-white/60" />
+            </div>
+            <div className="flex items-center justify-around border-t border-white/10 pt-3">
+              <Link to="/settings" className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10" aria-label="Settings">
+                <Settings className="size-[18px]" />
+              </Link>
+              <Link to="/help" className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10" aria-label="Help">
+                <HelpCircle className="size-[18px]" />
+              </Link>
+              <Link to="/logout" className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10" aria-label="Logout">
+                <LogOut className="size-[18px]" />
+              </Link>
+            </div>
+          </>
+        ) : (
+          <Link
+            to="/auth"
+            className="w-full rounded-xl bg-white text-primary text-sm font-semibold py-2.5 flex items-center justify-center shadow-elegant hover:opacity-95 transition-opacity"
+          >
+            Sign in
           </Link>
-          <Link to="/help" className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10" aria-label="Help">
-            <HelpCircle className="size-[18px]" />
-          </Link>
-          <Link to="/logout" className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10" aria-label="Logout">
-            <LogOut className="size-[18px]" />
-          </Link>
-        </div>
+        )}
       </div>
+
     </aside>
   );
 }
