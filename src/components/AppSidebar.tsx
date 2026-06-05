@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -6,13 +7,13 @@ import {
   Clock,
   Star,
   Trash2,
-  HardDrive,
   Settings,
   HelpCircle,
   LogOut,
   Cloud,
   ChevronDown,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const mainNav = [
   { title: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
