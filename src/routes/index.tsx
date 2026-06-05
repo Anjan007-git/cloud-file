@@ -69,7 +69,7 @@ function Landing() {
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors hidden sm:block">
+            <Link to="/auth" className="text-sm font-medium hover:text-primary transition-colors hidden sm:block">
               Sign in
             </Link>
             <Link
