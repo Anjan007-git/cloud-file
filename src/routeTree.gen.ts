@@ -9,9 +9,63 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrashRouteImport } from './routes/trash'
+import { Route as StorageRouteImport } from './routes/storage'
+import { Route as StarredRouteImport } from './routes/starred'
+import { Route as SharedRouteImport } from './routes/shared'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RecentRouteImport } from './routes/recent'
+import { Route as LogoutRouteImport } from './routes/logout'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as FilesRouteImport } from './routes/files'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TrashRoute = TrashRouteImport.update({
+  id: '/trash',
+  path: '/trash',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StorageRoute = StorageRouteImport.update({
+  id: '/storage',
+  path: '/storage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StarredRoute = StarredRouteImport.update({
+  id: '/starred',
+  path: '/starred',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SharedRoute = SharedRouteImport.update({
+  id: '/shared',
+  path: '/shared',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecentRoute = RecentRouteImport.update({
+  id: '/recent',
+  path: '/recent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilesRoute = FilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -26,31 +80,164 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/files': typeof FilesRoute
+  '/help': typeof HelpRoute
+  '/logout': typeof LogoutRoute
+  '/recent': typeof RecentRoute
+  '/settings': typeof SettingsRoute
+  '/shared': typeof SharedRoute
+  '/starred': typeof StarredRoute
+  '/storage': typeof StorageRoute
+  '/trash': typeof TrashRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/files': typeof FilesRoute
+  '/help': typeof HelpRoute
+  '/logout': typeof LogoutRoute
+  '/recent': typeof RecentRoute
+  '/settings': typeof SettingsRoute
+  '/shared': typeof SharedRoute
+  '/starred': typeof StarredRoute
+  '/storage': typeof StorageRoute
+  '/trash': typeof TrashRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/files': typeof FilesRoute
+  '/help': typeof HelpRoute
+  '/logout': typeof LogoutRoute
+  '/recent': typeof RecentRoute
+  '/settings': typeof SettingsRoute
+  '/shared': typeof SharedRoute
+  '/starred': typeof StarredRoute
+  '/storage': typeof StorageRoute
+  '/trash': typeof TrashRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/files'
+    | '/help'
+    | '/logout'
+    | '/recent'
+    | '/settings'
+    | '/shared'
+    | '/starred'
+    | '/storage'
+    | '/trash'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard'
-  id: '__root__' | '/' | '/dashboard'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/files'
+    | '/help'
+    | '/logout'
+    | '/recent'
+    | '/settings'
+    | '/shared'
+    | '/starred'
+    | '/storage'
+    | '/trash'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/files'
+    | '/help'
+    | '/logout'
+    | '/recent'
+    | '/settings'
+    | '/shared'
+    | '/starred'
+    | '/storage'
+    | '/trash'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  FilesRoute: typeof FilesRoute
+  HelpRoute: typeof HelpRoute
+  LogoutRoute: typeof LogoutRoute
+  RecentRoute: typeof RecentRoute
+  SettingsRoute: typeof SettingsRoute
+  SharedRoute: typeof SharedRoute
+  StarredRoute: typeof StarredRoute
+  StorageRoute: typeof StorageRoute
+  TrashRoute: typeof TrashRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trash': {
+      id: '/trash'
+      path: '/trash'
+      fullPath: '/trash'
+      preLoaderRoute: typeof TrashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/storage': {
+      id: '/storage'
+      path: '/storage'
+      fullPath: '/storage'
+      preLoaderRoute: typeof StorageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/starred': {
+      id: '/starred'
+      path: '/starred'
+      fullPath: '/starred'
+      preLoaderRoute: typeof StarredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shared': {
+      id: '/shared'
+      path: '/shared'
+      fullPath: '/shared'
+      preLoaderRoute: typeof SharedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recent': {
+      id: '/recent'
+      path: '/recent'
+      fullPath: '/recent'
+      preLoaderRoute: typeof RecentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/files': {
+      id: '/files'
+      path: '/files'
+      fullPath: '/files'
+      preLoaderRoute: typeof FilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -71,6 +258,15 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  FilesRoute: FilesRoute,
+  HelpRoute: HelpRoute,
+  LogoutRoute: LogoutRoute,
+  RecentRoute: RecentRoute,
+  SettingsRoute: SettingsRoute,
+  SharedRoute: SharedRoute,
+  StarredRoute: StarredRoute,
+  StorageRoute: StorageRoute,
+  TrashRoute: TrashRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
