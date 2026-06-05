@@ -29,6 +29,32 @@ export function AppSidebar() {
   const usedGb = 0;
   const totalGb = 200;
   const pct = (usedGb / totalGb) * 100;
+  const [user, setUser] = useState<{ name: string; email: string; avatar?: string } | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase.auth.getUser();
+      const u = data.user;
+      if (!u) { setUser(null); return; }
+      const meta = (u.user_metadata ?? {}) as Record<string, string>;
+      setUser({
+        name: meta.full_name || meta.name || u.email?.split("@")[0] || "User",
+        email: u.email ?? "",
+        avatar: meta.avatar_url,
+      });
+    };
+    load();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => load());
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const initials = (user?.name ?? "GU")
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
 
   return (
     <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-gradient-sidebar text-sidebar-foreground p-5 gap-5 sticky top-0 h-screen">
