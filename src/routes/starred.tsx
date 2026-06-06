@@ -10,13 +10,13 @@ export const Route = createFileRoute("/starred")({
 });
 
 function StarredPage() {
-  const { files, loading, toggleStar, moveToTrash, download } = useFiles("starred");
+  const { files, loading, toggleStar, moveToTrash, download, rename } = useFiles("starred");
   return (
     <DashboardLayout title="Starred" description="Your favorite files, all in one place.">
       {files.length === 0 && !loading ? (
         <EmptyPanel icon={<Star className="size-7" />} title="No starred items" description="Star important files to quickly find them later." />
       ) : (
-        <FileList files={files} loading={loading} onStar={toggleStar} onDownload={download} onTrash={moveToTrash} />
+        <FileList files={files} loading={loading} onStar={toggleStar} onDownload={download} onTrash={moveToTrash} onRename={rename} />
       )}
     </DashboardLayout>
   );

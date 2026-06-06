@@ -13,7 +13,7 @@ export const Route = createFileRoute("/files")({
 
 function FilesPage() {
   const { user, loading: userLoading } = useCurrentUser();
-  const { files, loading, uploading, upload, toggleStar, moveToTrash, download } = useFiles("all");
+  const { files, loading, uploading, upload, toggleStar, moveToTrash, download, rename } = useFiles("all");
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [dragOver, setDragOver] = useState(false);
@@ -106,6 +106,7 @@ function FilesPage() {
           onStar={toggleStar}
           onDownload={download}
           onTrash={moveToTrash}
+          onRename={rename}
         />
       )}
     </DashboardLayout>

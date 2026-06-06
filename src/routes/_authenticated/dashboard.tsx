@@ -34,7 +34,7 @@ function DashboardPage() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const { stats } = useStorageStats();
-  const { files, upload, toggleStar, moveToTrash, download } = useFiles("recent");
+  const { files, upload, toggleStar, moveToTrash, download, rename } = useFiles("recent");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const usedBytes = stats.usedBytes;
@@ -118,7 +118,7 @@ function DashboardPage() {
                     </button>
                   </div>
                 ) : (
-                  <FileList files={recent} onStar={toggleStar} onDownload={download} onTrash={moveToTrash} />
+                  <FileList files={recent} onStar={toggleStar} onDownload={download} onTrash={moveToTrash} onRename={rename} />
                 )}
               </div>
 
