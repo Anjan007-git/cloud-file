@@ -18,6 +18,13 @@ export type FileRow = {
 export type FilesFilter = "all" | "recent" | "starred" | "trash";
 
 const BUCKET = "user-files";
+const FILES_CHANGED_EVENT = "cloudfile:files-changed";
+
+function notifyFilesChanged() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(FILES_CHANGED_EVENT));
+  }
+}
 
 export function useFiles(filter: FilesFilter = "all") {
   const [files, setFiles] = useState<FileRow[]>([]);
@@ -41,21 +48,35 @@ export function useFiles(filter: FilesFilter = "all") {
     load();
   }, [load]);
 
+  useEffect(() => {
+    const onFilesChanged = () => {
+      void load();
+    };
+    window.addEventListener(FILES_CHANGED_EVENT, onFilesChanged);
+    return () => window.removeEventListener(FILES_CHANGED_EVENT, onFilesChanged);
+  }, [load]);
+
   const upload = useCallback(
-    async (fileList: FileList | File[]) => {
-      console.log("[upload] invoked with", fileList?.length, "file(s)");
+    async (incomingFiles: FileList | File[]) => {
+      const filesToUpload = Array.from(incomingFiles ?? []);
+      console.log("[upload] invoked with", filesToUpload.length, "file(s)");
+      if (filesToUpload.length === 0) {
+        toast.error("No files were selected");
+        return;
+      }
+      if (uploading) return;
+      setUploading(true);
       try {
         const { data: userData, error: userErr } = await supabase.auth.getUser();
         console.log("[upload] auth.getUser:", { user: userData?.user?.id, userErr });
         const user = userData.user;
         if (!user) {
+          setUploading(false);
           toast.error("Please sign in to upload files");
           return;
         }
-        setUploading(true);
-        const arr = Array.from(fileList);
         let ok = 0;
-        for (const f of arr) {
+        for (const f of filesToUpload) {
           console.log("[upload] processing", f.name, f.size, f.type);
           const safe = f.name.replace(/[^\w.\-]+/g, "_");
           const path = `${user.id}/${Date.now()}-${safe}`;
@@ -90,7 +111,12 @@ export function useFiles(filter: FilesFilter = "all") {
           ok++;
         }
         setUploading(false);
-        if (ok > 0) toast.success(`Uploaded ${ok} file${ok > 1 ? "s" : ""}`);
+        if (ok > 0) {
+          toast.success(`Uploaded ${ok} file${ok > 1 ? "s" : ""}`);
+          notifyFilesChanged();
+        } else {
+          toast.error("Upload failed");
+        }
         await load();
       } catch (err) {
         console.error("[upload] unexpected error", err);
@@ -108,6 +134,7 @@ export function useFiles(filter: FilesFilter = "all") {
         .update({ starred: !file.starred })
         .eq("id", file.id);
       if (error) return toast.error(error.message);
+      notifyFilesChanged();
       await load();
     },
     [load],
@@ -118,6 +145,7 @@ export function useFiles(filter: FilesFilter = "all") {
       const { error } = await supabase.from("files").update({ trashed: true }).eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Moved to trash");
+      notifyFilesChanged();
       await load();
     },
     [load],
@@ -128,6 +156,7 @@ export function useFiles(filter: FilesFilter = "all") {
       const { error } = await supabase.from("files").update({ trashed: false }).eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Restored");
+      notifyFilesChanged();
       await load();
     },
     [load],
@@ -140,6 +169,7 @@ export function useFiles(filter: FilesFilter = "all") {
       const { error } = await supabase.from("files").delete().eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Deleted permanently");
+      notifyFilesChanged();
       await load();
     },
     [load],
@@ -155,6 +185,7 @@ export function useFiles(filter: FilesFilter = "all") {
         .eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Renamed");
+      notifyFilesChanged();
       await load();
     },
     [load],
