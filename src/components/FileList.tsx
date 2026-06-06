@@ -55,17 +55,17 @@ export function FileList({
 
   return (
     <div className="bg-card rounded-2xl shadow-card border border-border/60 overflow-hidden">
-      <div className="grid grid-cols-[1fr_120px_140px_auto] items-center px-5 py-3 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <div className="grid grid-cols-[1fr_120px_140px_auto]  items-center px-5 py-3 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         <div>Name</div>
         <div>Size</div>
         <div>Modified</div>
-        <div className="w-32 text-right pr-2">Actions</div>
+        <div className="w-44 text-right pr-2">Actions</div>
       </div>
       <ul className="divide-y divide-border/60">
         {files.map((f) => {
           const Icon = iconFor(f.mime_type);
           return (
-            <li key={f.id} className="grid grid-cols-[1fr_120px_140px_auto] items-center px-5 py-3 hover:bg-muted/40 transition-colors">
+            <li key={f.id} className="grid grid-cols-[1fr_120px_140px_auto]  items-center px-5 py-3 hover:bg-muted/40 transition-colors">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="size-9 rounded-lg bg-primary/10 text-primary grid place-items-center shrink-0">
                   <Icon className="size-4" />
@@ -80,7 +80,7 @@ export function FileList({
               </div>
               <div className="text-sm text-muted-foreground">{formatBytes(f.size_bytes)}</div>
               <div className="text-sm text-muted-foreground">{formatDate(f.updated_at)}</div>
-              <div className="flex items-center justify-end gap-1 w-32 pr-2">
+              <div className="flex items-center justify-end gap-1 w-44 pr-2">
                 {trashed ? (
                   <>
                     <button onClick={() => onRestore?.(f)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" aria-label="Restore">
