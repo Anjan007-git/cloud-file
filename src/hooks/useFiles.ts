@@ -43,43 +43,60 @@ export function useFiles(filter: FilesFilter = "all") {
 
   const upload = useCallback(
     async (fileList: FileList | File[]) => {
-      const { data: userData } = await supabase.auth.getUser();
-      const user = userData.user;
-      if (!user) {
-        toast.error("Please sign in to upload files");
-        return;
-      }
-      setUploading(true);
-      const arr = Array.from(fileList);
-      let ok = 0;
-      for (const f of arr) {
-        const safe = f.name.replace(/[^\w.\-]+/g, "_");
-        const path = `${user.id}/${Date.now()}-${safe}`;
-        const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, f, {
-          contentType: f.type || "application/octet-stream",
-          upsert: false,
-        });
-        if (upErr) {
-          toast.error(`${f.name}: ${upErr.message}`);
-          continue;
+      console.log("[upload] invoked with", fileList?.length, "file(s)");
+      try {
+        const { data: userData, error: userErr } = await supabase.auth.getUser();
+        console.log("[upload] auth.getUser:", { user: userData?.user?.id, userErr });
+        const user = userData.user;
+        if (!user) {
+          toast.error("Please sign in to upload files");
+          return;
         }
-        const { error: insErr } = await supabase.from("files").insert({
-          user_id: user.id,
-          name: f.name,
-          storage_path: path,
-          size_bytes: f.size,
-          mime_type: f.type || null,
-        });
-        if (insErr) {
-          await supabase.storage.from(BUCKET).remove([path]);
-          toast.error(`${f.name}: ${insErr.message}`);
-          continue;
+        setUploading(true);
+        const arr = Array.from(fileList);
+        let ok = 0;
+        for (const f of arr) {
+          console.log("[upload] processing", f.name, f.size, f.type);
+          const safe = f.name.replace(/[^\w.\-]+/g, "_");
+          const path = `${user.id}/${Date.now()}-${safe}`;
+          const { data: upData, error: upErr } = await supabase.storage
+            .from(BUCKET)
+            .upload(path, f, {
+              contentType: f.type || "application/octet-stream",
+              upsert: false,
+            });
+          console.log("[upload] storage result:", { upData, upErr });
+          if (upErr) {
+            toast.error(`${f.name}: ${upErr.message}`);
+            continue;
+          }
+          const { data: insData, error: insErr } = await supabase
+            .from("files")
+            .insert({
+              user_id: user.id,
+              name: f.name,
+              storage_path: path,
+              size_bytes: f.size,
+              mime_type: f.type || null,
+            })
+            .select()
+            .single();
+          console.log("[upload] db insert result:", { insData, insErr });
+          if (insErr) {
+            await supabase.storage.from(BUCKET).remove([path]);
+            toast.error(`${f.name}: ${insErr.message}`);
+            continue;
+          }
+          ok++;
         }
-        ok++;
+        setUploading(false);
+        if (ok > 0) toast.success(`Uploaded ${ok} file${ok > 1 ? "s" : ""}`);
+        await load();
+      } catch (err) {
+        console.error("[upload] unexpected error", err);
+        setUploading(false);
+        toast.error(err instanceof Error ? err.message : "Upload failed");
       }
-      setUploading(false);
-      if (ok > 0) toast.success(`Uploaded ${ok} file${ok > 1 ? "s" : ""}`);
-      await load();
     },
     [load],
   );
