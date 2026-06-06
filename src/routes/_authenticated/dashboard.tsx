@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { AppSidebar } from "@/components/AppSidebar";
 import { DashboardTopbar } from "@/components/DashboardTopbar";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -27,23 +28,10 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
-const userName = "Alex";
-
 const stats = [
-  { label: "Total Files", value: "0", sub: "Start uploading", icon: FolderOpen, tint: "bg-primary/10 text-primary" },
-  { label: "Storage Used", value: "0 GB", sub: "of 200 GB", icon: CloudUpload, tint: "bg-aqua/20 text-aqua-foreground" },
-  { label: "Shared Files", value: "0", sub: "No shares yet", icon: Users, tint: "bg-accent/60 text-accent-foreground" },
-  { label: "Downloads", value: "0", sub: "This week", icon: Download, tint: "bg-warning/15 text-foreground" },
-];
-
-const quickActions = [
-  { title: "Upload Files", sub: "Drag and drop files", icon: CloudUpload, color: "text-primary bg-primary/10" },
-  { title: "New Folder", sub: "Create a new folder", icon: FolderPlus, color: "text-aqua-foreground bg-aqua/20" },
-  { title: "Share Files", sub: "Share with others", icon: Share2, color: "text-foreground bg-accent/60" },
-  { title: "Storage Settings", sub: "Manage your storage", icon: Settings, color: "text-foreground bg-muted" },
-];
-
+...
 function DashboardPage() {
+  const { user } = useCurrentUser();
   const used = 0;
   const total = 200;
   const pct = (used / total) * 100;
@@ -54,12 +42,12 @@ function DashboardPage() {
     <div className="min-h-screen flex bg-gradient-hero">
       <AppSidebar />
       <main className="flex-1 p-6 lg:p-10">
-        <DashboardTopbar initials={userName.slice(0, 2).toUpperCase()} />
+        <DashboardTopbar />
 
         {/* Welcome */}
         <section className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground flex items-center gap-3">
-            Welcome back, {userName}! <span className="text-3xl">👋</span>
+            Welcome back, {user?.firstName ?? "there"}! <span className="text-3xl">👋</span>
           </h1>
           <p className="text-muted-foreground mt-2">
             Here's what's happening with your files today.
@@ -73,9 +61,9 @@ function DashboardPage() {
               {stats.map((s) => (
                 <div
                   key={s.label}
-                  className="bg-card rounded-2xl p-5 shadow-card border border-border/60 hover:shadow-elegant transition-all"
+                  className="group bg-card rounded-2xl p-5 shadow-card border border-border/60 hover:shadow-elegant hover:-translate-y-0.5 hover:border-primary/30 transition-all duration-300 cursor-pointer"
                 >
-                  <div className={`size-11 rounded-xl grid place-items-center mb-4 ${s.tint}`}>
+                  <div className={`size-11 rounded-xl grid place-items-center mb-4 ${s.tint} group-hover:scale-105 transition-transform`}>
                     <s.icon className="size-5" />
                   </div>
                   <div className="text-sm text-muted-foreground">{s.label}</div>
