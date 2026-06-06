@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+const FILES_CHANGED_EVENT = "cloudfile:files-changed";
+
 export type StorageStats = {
   totalFiles: number;
   usedBytes: number;
@@ -33,6 +35,7 @@ export function useStorageStats() {
   useEffect(() => {
     let active = true;
     const load = async () => {
+      setLoading(true);
       const { data, error } = await supabase
         .from("files")
         .select("size_bytes,mime_type,starred,trashed");
@@ -63,8 +66,13 @@ export function useStorageStats() {
       setLoading(false);
     };
     load();
+    const onFilesChanged = () => {
+      void load();
+    };
+    window.addEventListener(FILES_CHANGED_EVENT, onFilesChanged);
     return () => {
       active = false;
+      window.removeEventListener(FILES_CHANGED_EVENT, onFilesChanged);
     };
   }, []);
 
