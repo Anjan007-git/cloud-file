@@ -1,5 +1,6 @@
 import { Bell, Search, Upload, User as UserIcon, Settings, CreditCard, LifeBuoy, LogOut } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useRef } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,12 +10,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useFiles } from "@/hooks/useFiles";
 import { supabase } from "@/integrations/supabase/client";
 
 export function DashboardTopbar() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const initials = user?.initials ?? "GU";
+  const { upload, uploading } = useFiles("recent");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
