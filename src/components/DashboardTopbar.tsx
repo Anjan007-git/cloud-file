@@ -1,5 +1,6 @@
 import { Bell, Search, Upload, User as UserIcon, Settings, CreditCard, LifeBuoy, LogOut } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useRef } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,12 +10,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useFiles } from "@/hooks/useFiles";
 import { supabase } from "@/integrations/supabase/client";
 
 export function DashboardTopbar() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const initials = user?.initials ?? "GU";
+  const { upload, uploading } = useFiles("recent");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -45,9 +49,24 @@ export function DashboardTopbar() {
       </button>
 
       {/* Upload */}
-      <button className="h-11 px-5 rounded-2xl bg-gradient-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 shadow-elegant hover:shadow-glow hover:opacity-95 transition-all">
-        <Upload className="size-4" /> Upload
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files?.length) upload(e.target.files);
+          e.target.value = "";
+        }}
+      />
+      <button
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        className="h-11 px-5 rounded-2xl bg-gradient-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 shadow-elegant hover:shadow-glow hover:opacity-95 transition-all disabled:opacity-60"
+      >
+        <Upload className="size-4" /> {uploading ? "Uploading…" : "Upload"}
       </button>
+
 
       {/* Profile dropdown */}
       <DropdownMenu>
