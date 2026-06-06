@@ -148,6 +148,7 @@ export function useFiles(filter: FilesFilter = "all") {
       if (error) return toast.error(error.message);
       toast.success("Moved to trash");
       recordActivity("trashed", file.name);
+      notifyFilesChanged();
       await load();
     },
     [load],
@@ -159,6 +160,7 @@ export function useFiles(filter: FilesFilter = "all") {
       if (error) return toast.error(error.message);
       toast.success("Restored");
       recordActivity("restored", file.name);
+      notifyFilesChanged();
       await load();
     },
     [load],
@@ -180,6 +182,7 @@ export function useFiles(filter: FilesFilter = "all") {
       if (error) return toast.error(error.message);
       toast.success("Deleted permanently");
       recordActivity("deleted", file.name);
+      notifyFilesChanged();
       await load();
     },
     [load, requestDelete],
@@ -196,6 +199,7 @@ export function useFiles(filter: FilesFilter = "all") {
       if (error) return toast.error(error.message);
       toast.success("Renamed");
       recordActivity("renamed", trimmed, `was "${file.name}"`);
+      notifyFilesChanged();
       await load();
     },
     [load],
