@@ -10,15 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrashRouteImport } from './routes/trash'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as StorageRouteImport } from './routes/storage'
 import { Route as StarredRouteImport } from './routes/starred'
 import { Route as SharedRouteImport } from './routes/shared'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SecurityRouteImport } from './routes/security'
+import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as RecentRouteImport } from './routes/recent'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LogoutRouteImport } from './routes/logout'
+import { Route as HelpCenterRouteImport } from './routes/help-center'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as FilesRouteImport } from './routes/files'
+import { Route as DocumentationRouteImport } from './routes/documentation'
+import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -26,6 +35,11 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 const TrashRoute = TrashRouteImport.update({
   id: '/trash',
   path: '/trash',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StorageRoute = StorageRouteImport.update({
@@ -48,14 +62,34 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecentRoute = RecentRouteImport.update({
   id: '/recent',
   path: '/recent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LogoutRoute = LogoutRouteImport.update({
   id: '/logout',
   path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpCenterRoute = HelpCenterRouteImport.update({
+  id: '/help-center',
+  path: '/help-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HelpRoute = HelpRouteImport.update({
@@ -68,9 +102,29 @@ const FilesRoute = FilesRouteImport.update({
   path: '/files',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocumentationRoute = DocumentationRouteImport.update({
+  id: '/documentation',
+  path: '/documentation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiePolicyRoute = CookiePolicyRouteImport.update({
+  id: '/cookie-policy',
+  path: '/cookie-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -90,29 +144,47 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
+  '/documentation': typeof DocumentationRoute
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
+  '/help-center': typeof HelpCenterRoute
   '/logout': typeof LogoutRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/recent': typeof RecentRoute
+  '/resources': typeof ResourcesRoute
+  '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/shared': typeof SharedRoute
   '/starred': typeof StarredRoute
   '/storage': typeof StorageRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/trash': typeof TrashRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
+  '/documentation': typeof DocumentationRoute
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
+  '/help-center': typeof HelpCenterRoute
   '/logout': typeof LogoutRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/recent': typeof RecentRoute
+  '/resources': typeof ResourcesRoute
+  '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/shared': typeof SharedRoute
   '/starred': typeof StarredRoute
   '/storage': typeof StorageRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/trash': typeof TrashRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
@@ -120,15 +192,24 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
+  '/documentation': typeof DocumentationRoute
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
+  '/help-center': typeof HelpCenterRoute
   '/logout': typeof LogoutRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/recent': typeof RecentRoute
+  '/resources': typeof ResourcesRoute
+  '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/shared': typeof SharedRoute
   '/starred': typeof StarredRoute
   '/storage': typeof StorageRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/trash': typeof TrashRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
 }
@@ -136,44 +217,71 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/auth'
+    | '/contact'
+    | '/cookie-policy'
+    | '/documentation'
     | '/files'
     | '/help'
+    | '/help-center'
     | '/logout'
+    | '/privacy-policy'
     | '/recent'
+    | '/resources'
+    | '/security'
     | '/settings'
     | '/shared'
     | '/starred'
     | '/storage'
+    | '/terms-of-service'
     | '/trash'
     | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/auth'
+    | '/contact'
+    | '/cookie-policy'
+    | '/documentation'
     | '/files'
     | '/help'
+    | '/help-center'
     | '/logout'
+    | '/privacy-policy'
     | '/recent'
+    | '/resources'
+    | '/security'
     | '/settings'
     | '/shared'
     | '/starred'
     | '/storage'
+    | '/terms-of-service'
     | '/trash'
     | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/auth'
+    | '/contact'
+    | '/cookie-policy'
+    | '/documentation'
     | '/files'
     | '/help'
+    | '/help-center'
     | '/logout'
+    | '/privacy-policy'
     | '/recent'
+    | '/resources'
+    | '/security'
     | '/settings'
     | '/shared'
     | '/starred'
     | '/storage'
+    | '/terms-of-service'
     | '/trash'
     | '/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
@@ -181,15 +289,24 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  ContactRoute: typeof ContactRoute
+  CookiePolicyRoute: typeof CookiePolicyRoute
+  DocumentationRoute: typeof DocumentationRoute
   FilesRoute: typeof FilesRoute
   HelpRoute: typeof HelpRoute
+  HelpCenterRoute: typeof HelpCenterRoute
   LogoutRoute: typeof LogoutRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RecentRoute: typeof RecentRoute
+  ResourcesRoute: typeof ResourcesRoute
+  SecurityRoute: typeof SecurityRoute
   SettingsRoute: typeof SettingsRoute
   SharedRoute: typeof SharedRoute
   StarredRoute: typeof StarredRoute
   StorageRoute: typeof StorageRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
   TrashRoute: typeof TrashRoute
 }
 
@@ -200,6 +317,13 @@ declare module '@tanstack/react-router' {
       path: '/trash'
       fullPath: '/trash'
       preLoaderRoute: typeof TrashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/storage': {
@@ -230,6 +354,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recent': {
       id: '/recent'
       path: '/recent'
@@ -237,11 +375,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/logout': {
       id: '/logout'
       path: '/logout'
       fullPath: '/logout'
       preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help-center': {
+      id: '/help-center'
+      path: '/help-center'
+      fullPath: '/help-center'
+      preLoaderRoute: typeof HelpCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/help': {
@@ -258,11 +410,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FilesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/documentation': {
+      id: '/documentation'
+      path: '/documentation'
+      fullPath: '/documentation'
+      preLoaderRoute: typeof DocumentationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookie-policy': {
+      id: '/cookie-policy'
+      path: '/cookie-policy'
+      fullPath: '/cookie-policy'
+      preLoaderRoute: typeof CookiePolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -303,17 +483,36 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  ContactRoute: ContactRoute,
+  CookiePolicyRoute: CookiePolicyRoute,
+  DocumentationRoute: DocumentationRoute,
   FilesRoute: FilesRoute,
   HelpRoute: HelpRoute,
+  HelpCenterRoute: HelpCenterRoute,
   LogoutRoute: LogoutRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   RecentRoute: RecentRoute,
+  ResourcesRoute: ResourcesRoute,
+  SecurityRoute: SecurityRoute,
   SettingsRoute: SettingsRoute,
   SharedRoute: SharedRoute,
   StarredRoute: StarredRoute,
   StorageRoute: StorageRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
   TrashRoute: TrashRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
