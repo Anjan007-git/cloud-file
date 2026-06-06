@@ -20,6 +20,8 @@ export type Database = {
           id: string
           mime_type: string | null
           name: string
+          s3_key: string | null
+          s3_url: string | null
           size_bytes: number
           starred: boolean
           storage_path: string
@@ -32,6 +34,8 @@ export type Database = {
           id?: string
           mime_type?: string | null
           name: string
+          s3_key?: string | null
+          s3_url?: string | null
           size_bytes?: number
           starred?: boolean
           storage_path: string
@@ -44,6 +48,8 @@ export type Database = {
           id?: string
           mime_type?: string | null
           name?: string
+          s3_key?: string | null
+          s3_url?: string | null
           size_bytes?: number
           starred?: boolean
           storage_path?: string

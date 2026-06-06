@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { getS3UploadUrl, getS3DownloadUrl, deleteS3Object } from "@/lib/s3.functions";
 
 export type FileRow = {
   id: string;
@@ -13,11 +15,12 @@ export type FileRow = {
   trashed: boolean;
   created_at: string;
   updated_at: string;
+  s3_key: string | null;
+  s3_url: string | null;
 };
 
 export type FilesFilter = "all" | "recent" | "starred" | "trash";
 
-const BUCKET = "user-files";
 const FILES_CHANGED_EVENT = "cloudfile:files-changed";
 
 function notifyFilesChanged() {
@@ -30,6 +33,10 @@ export function useFiles(filter: FilesFilter = "all") {
   const [files, setFiles] = useState<FileRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+
+  const requestUploadUrl = useServerFn(getS3UploadUrl);
+  const requestDownloadUrl = useServerFn(getS3DownloadUrl);
+  const requestDelete = useServerFn(deleteS3Object);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -59,7 +66,6 @@ export function useFiles(filter: FilesFilter = "all") {
   const upload = useCallback(
     async (incomingFiles: FileList | File[]) => {
       const filesToUpload = Array.from(incomingFiles ?? []);
-      console.log("[upload] invoked with", filesToUpload.length, "file(s)");
       if (filesToUpload.length === 0) {
         toast.error("No files were selected");
         return;
@@ -67,72 +73,66 @@ export function useFiles(filter: FilesFilter = "all") {
       if (uploading) return;
       setUploading(true);
       try {
-        const { data: userData, error: userErr } = await supabase.auth.getUser();
-        console.log("[upload] auth.getUser:", { user: userData?.user?.id, userErr });
+        const { data: userData } = await supabase.auth.getUser();
         const user = userData.user;
         if (!user) {
-          setUploading(false);
           toast.error("Please sign in to upload files");
           return;
         }
         let ok = 0;
         for (const f of filesToUpload) {
-          console.log("[upload] processing", f.name, f.size, f.type);
-          const safe = f.name.replace(/[^\w.\-]+/g, "_");
-          const path = `${user.id}/${Date.now()}-${safe}`;
-          const { data: upData, error: upErr } = await supabase.storage
-            .from(BUCKET)
-            .upload(path, f, {
-              contentType: f.type || "application/octet-stream",
-              upsert: false,
+          try {
+            const { uploadUrl, key, publicUrl } = await requestUploadUrl({
+              data: { filename: f.name, contentType: f.type || "application/octet-stream" },
             });
-          console.log("[upload] storage result:", { upData, upErr });
-          if (upErr) {
-            toast.error(`${f.name}: ${upErr.message}`);
-            continue;
+            const putRes = await fetch(uploadUrl, {
+              method: "PUT",
+              headers: { "Content-Type": f.type || "application/octet-stream" },
+              body: f,
+            });
+            if (!putRes.ok) {
+              const txt = await putRes.text().catch(() => "");
+              console.error("[s3 upload] failed", putRes.status, txt);
+              toast.error(`${f.name}: S3 upload failed (${putRes.status})`);
+              continue;
+            }
+            const { error: insErr } = await supabase
+              .from("files")
+              .insert({
+                user_id: user.id,
+                name: f.name,
+                storage_path: key,
+                s3_key: key,
+                s3_url: publicUrl,
+                size_bytes: f.size,
+                mime_type: f.type || null,
+              });
+            if (insErr) {
+              console.error("[db insert]", insErr);
+              toast.error(`${f.name}: ${insErr.message}`);
+              continue;
+            }
+            ok++;
+          } catch (err) {
+            console.error("[upload] error for", f.name, err);
+            toast.error(`${f.name}: ${err instanceof Error ? err.message : "Upload failed"}`);
           }
-          const { data: insData, error: insErr } = await supabase
-            .from("files")
-            .insert({
-              user_id: user.id,
-              name: f.name,
-              storage_path: path,
-              size_bytes: f.size,
-              mime_type: f.type || null,
-            })
-            .select()
-            .single();
-          console.log("[upload] db insert result:", { insData, insErr });
-          if (insErr) {
-            await supabase.storage.from(BUCKET).remove([path]);
-            toast.error(`${f.name}: ${insErr.message}`);
-            continue;
-          }
-          ok++;
         }
-        setUploading(false);
         if (ok > 0) {
           toast.success(`Uploaded ${ok} file${ok > 1 ? "s" : ""}`);
           notifyFilesChanged();
-        } else {
-          toast.error("Upload failed");
         }
         await load();
-      } catch (err) {
-        console.error("[upload] unexpected error", err);
+      } finally {
         setUploading(false);
-        toast.error(err instanceof Error ? err.message : "Upload failed");
       }
     },
-    [load, uploading],
+    [load, uploading, requestUploadUrl],
   );
 
   const toggleStar = useCallback(
     async (file: FileRow) => {
-      const { error } = await supabase
-        .from("files")
-        .update({ starred: !file.starred })
-        .eq("id", file.id);
+      const { error } = await supabase.from("files").update({ starred: !file.starred }).eq("id", file.id);
       if (error) return toast.error(error.message);
       notifyFilesChanged();
       await load();
@@ -164,15 +164,23 @@ export function useFiles(filter: FilesFilter = "all") {
 
   const remove = useCallback(
     async (file: FileRow) => {
-      const { error: stErr } = await supabase.storage.from(BUCKET).remove([file.storage_path]);
-      if (stErr) return toast.error(stErr.message);
+      try {
+        const key = file.s3_key ?? file.storage_path;
+        if (key) {
+          await requestDelete({ data: { key } });
+        }
+      } catch (err) {
+        console.error("[s3 delete]", err);
+        toast.error(err instanceof Error ? err.message : "S3 delete failed");
+        return;
+      }
       const { error } = await supabase.from("files").delete().eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Deleted permanently");
       notifyFilesChanged();
       await load();
     },
-    [load],
+    [load, requestDelete],
   );
 
   const rename = useCallback(
@@ -191,13 +199,19 @@ export function useFiles(filter: FilesFilter = "all") {
     [load],
   );
 
-  const download = useCallback(async (file: FileRow) => {
-    const { data, error } = await supabase.storage
-      .from(BUCKET)
-      .createSignedUrl(file.storage_path, 60, { download: file.name });
-    if (error || !data?.signedUrl) return toast.error(error?.message ?? "Download failed");
-    window.open(data.signedUrl, "_blank");
-  }, []);
+  const download = useCallback(
+    async (file: FileRow) => {
+      try {
+        const key = file.s3_key ?? file.storage_path;
+        if (!key) return toast.error("File has no storage key");
+        const { downloadUrl } = await requestDownloadUrl({ data: { key, filename: file.name } });
+        window.open(downloadUrl, "_blank");
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Download failed");
+      }
+    },
+    [requestDownloadUrl],
+  );
 
   return { files, loading, uploading, upload, toggleStar, moveToTrash, restore, remove, rename, download, reload: load };
 }
