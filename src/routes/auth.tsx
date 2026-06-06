@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Cloud, ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -79,11 +80,8 @@ function AuthPage() {
           <ArrowLeft className="size-4" /> Back to home
         </Link>
         <div className="bg-card rounded-3xl border border-border shadow-elegant p-8">
-          <div className="flex items-center gap-2.5 mb-7">
-            <div className="size-10 rounded-xl bg-gradient-primary grid place-items-center shadow-glow">
-              <Cloud className="size-5 text-white" />
-            </div>
-            <span className="font-bold text-lg">CloudFile</span>
+          <div className="mb-7">
+            <Logo size={36} />
           </div>
 
           <h1 className="text-2xl font-bold tracking-tight">
