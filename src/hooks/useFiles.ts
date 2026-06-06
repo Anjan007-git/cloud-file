@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { getS3UploadUrl, getS3DownloadUrl, deleteS3Object } from "@/lib/s3.functions";
+import { recordActivity } from "@/lib/activity";
 
 export type FileRow = {
   id: string;
@@ -113,6 +114,7 @@ export function useFiles(filter: FilesFilter = "all") {
               continue;
             }
             ok++;
+            recordActivity("uploaded", f.name);
           } catch (err) {
             console.error("[upload] error for", f.name, err);
             toast.error(`${f.name}: ${err instanceof Error ? err.message : "Upload failed"}`);
@@ -145,6 +147,7 @@ export function useFiles(filter: FilesFilter = "all") {
       const { error } = await supabase.from("files").update({ trashed: true }).eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Moved to trash");
+      recordActivity("trashed", file.name);
       notifyFilesChanged();
       await load();
     },
@@ -156,6 +159,7 @@ export function useFiles(filter: FilesFilter = "all") {
       const { error } = await supabase.from("files").update({ trashed: false }).eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Restored");
+      recordActivity("restored", file.name);
       notifyFilesChanged();
       await load();
     },
@@ -177,6 +181,7 @@ export function useFiles(filter: FilesFilter = "all") {
       const { error } = await supabase.from("files").delete().eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Deleted permanently");
+      recordActivity("deleted", file.name);
       notifyFilesChanged();
       await load();
     },
@@ -193,6 +198,7 @@ export function useFiles(filter: FilesFilter = "all") {
         .eq("id", file.id);
       if (error) return toast.error(error.message);
       toast.success("Renamed");
+      recordActivity("renamed", trimmed, `was "${file.name}"`);
       notifyFilesChanged();
       await load();
     },
@@ -206,6 +212,7 @@ export function useFiles(filter: FilesFilter = "all") {
         if (!key) return toast.error("File has no storage key");
         const { downloadUrl } = await requestDownloadUrl({ data: { key, filename: file.name } });
         window.open(downloadUrl, "_blank");
+        recordActivity("downloaded", file.name);
       } catch (err) {
         toast.error(err instanceof Error ? err.message : "Download failed");
       }
