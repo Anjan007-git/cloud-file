@@ -15,7 +15,7 @@ export function DashboardLayout({
     <div className="min-h-screen flex bg-gradient-hero">
       <AppSidebar />
       <main className="flex-1 p-6 lg:p-10 min-w-0">
-        <DashboardTopbar initials="AJ" />
+        <DashboardTopbar />
         {title && (
           <section className="mb-6">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">{title}</h1>
