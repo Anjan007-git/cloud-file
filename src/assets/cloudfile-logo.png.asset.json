@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "3f9f5a71-b8bb-4d42-abfe-4c45706bbddc",
-  "project_id": "3e9874df-fe89-4d3e-a9c0-749904ea0bd1",
-  "url": "/__l5e/assets-v1/3f9f5a71-b8bb-4d42-abfe-4c45706bbddc/cloudfile-logo.png",
-  "r2_key": "a/v1/3e9874df-fe89-4d3e-a9c0-749904ea0bd1/3f9f5a71-b8bb-4d42-abfe-4c45706bbddc/cloudfile-logo.png",
-  "original_filename": "cloudfile-logo.png",
-  "size": 306347,
   "content_type": "image/png",
-  "created_at": "2026-06-06T13:05:55Z"
+  "created_at": "2026-06-06T13:05:55Z",
+  "original_filename": "cloudfile-logo.png",
+  "project_id": "53bf079c-8023-414e-9f30-d3358ae02cb9",
+  "r2_key": "a/v1/53bf079c-8023-414e-9f30-d3358ae02cb9/3f9f5a71-b8bb-4d42-abfe-4c45706bbddc/cloudfile-logo.png",
+  "size": 306347,
+  "url": "/__l5e/assets-v1/3f9f5a71-b8bb-4d42-abfe-4c45706bbddc/cloudfile-logo.png",
+  "version": 1
 }
