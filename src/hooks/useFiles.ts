@@ -128,6 +128,21 @@ export function useFiles(filter: FilesFilter = "all") {
     [load],
   );
 
+  const rename = useCallback(
+    async (file: FileRow, newName: string) => {
+      const trimmed = newName.trim();
+      if (!trimmed || trimmed === file.name) return;
+      const { error } = await supabase
+        .from("files")
+        .update({ name: trimmed, updated_at: new Date().toISOString() })
+        .eq("id", file.id);
+      if (error) return toast.error(error.message);
+      toast.success("Renamed");
+      await load();
+    },
+    [load],
+  );
+
   const download = useCallback(async (file: FileRow) => {
     const { data, error } = await supabase.storage
       .from(BUCKET)
@@ -136,5 +151,5 @@ export function useFiles(filter: FilesFilter = "all") {
     window.open(data.signedUrl, "_blank");
   }, []);
 
-  return { files, loading, uploading, upload, toggleStar, moveToTrash, restore, remove, download, reload: load };
+  return { files, loading, uploading, upload, toggleStar, moveToTrash, restore, remove, rename, download, reload: load };
 }
