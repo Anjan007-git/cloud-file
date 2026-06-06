@@ -17,7 +17,7 @@ import {
 import { AppSidebar } from "@/components/AppSidebar";
 import { DashboardTopbar } from "@/components/DashboardTopbar";
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — CloudFile" },

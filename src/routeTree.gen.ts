@@ -18,9 +18,9 @@ import { Route as RecentRouteImport } from './routes/recent'
 import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as FilesRouteImport } from './routes/files'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const TrashRoute = TrashRouteImport.update({
   id: '/trash',
@@ -67,11 +67,6 @@ const FilesRoute = FilesRouteImport.update({
   path: '/files',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -82,11 +77,15 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/_authenticated/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRoute
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/logout': typeof LogoutRoute
@@ -96,11 +95,11 @@ export interface FileRoutesByFullPath {
   '/starred': typeof StarredRoute
   '/storage': typeof StorageRoute
   '/trash': typeof TrashRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRoute
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/logout': typeof LogoutRoute
@@ -110,12 +109,12 @@ export interface FileRoutesByTo {
   '/starred': typeof StarredRoute
   '/storage': typeof StorageRoute
   '/trash': typeof TrashRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRoute
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/logout': typeof LogoutRoute
@@ -125,13 +124,13 @@ export interface FileRoutesById {
   '/starred': typeof StarredRoute
   '/storage': typeof StorageRoute
   '/trash': typeof TrashRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
-    | '/dashboard'
     | '/files'
     | '/help'
     | '/logout'
@@ -141,11 +140,11 @@ export interface FileRouteTypes {
     | '/starred'
     | '/storage'
     | '/trash'
+    | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/dashboard'
     | '/files'
     | '/help'
     | '/logout'
@@ -155,11 +154,11 @@ export interface FileRouteTypes {
     | '/starred'
     | '/storage'
     | '/trash'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/auth'
-    | '/dashboard'
     | '/files'
     | '/help'
     | '/logout'
@@ -169,12 +168,12 @@ export interface FileRouteTypes {
     | '/starred'
     | '/storage'
     | '/trash'
+    | '/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
-  DashboardRoute: typeof DashboardRoute
   FilesRoute: typeof FilesRoute
   HelpRoute: typeof HelpRoute
   LogoutRoute: typeof LogoutRoute
@@ -184,6 +183,7 @@ export interface RootRouteChildren {
   StarredRoute: typeof StarredRoute
   StorageRoute: typeof StorageRoute
   TrashRoute: typeof TrashRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -251,13 +251,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FilesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -272,13 +265,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
-  DashboardRoute: DashboardRoute,
   FilesRoute: FilesRoute,
   HelpRoute: HelpRoute,
   LogoutRoute: LogoutRoute,
@@ -288,7 +287,18 @@ const rootRouteChildren: RootRouteChildren = {
   StarredRoute: StarredRoute,
   StorageRoute: StorageRoute,
   TrashRoute: TrashRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
