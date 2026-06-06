@@ -1,4 +1,4 @@
-import { FileText, Image as ImageIcon, Film, FileArchive, Music, File as FileIcon, Star, Download, Trash2, RotateCcw, XCircle } from "lucide-react";
+import { FileText, Image as ImageIcon, Film, FileArchive, Music, File as FileIcon, Star, Download, Trash2, RotateCcw, XCircle, Pencil } from "lucide-react";
 import type { FileRow } from "@/hooks/useFiles";
 
 function iconFor(mime: string | null) {
@@ -31,6 +31,7 @@ export function FileList({
   onTrash,
   onRestore,
   onDelete,
+  onRename,
 }: {
   files: FileRow[];
   loading?: boolean;
@@ -40,6 +41,7 @@ export function FileList({
   onTrash?: (f: FileRow) => void;
   onRestore?: (f: FileRow) => void;
   onDelete?: (f: FileRow) => void;
+  onRename?: (f: FileRow, newName: string) => void;
 }) {
   if (loading) {
     return (
@@ -93,6 +95,18 @@ export function FileList({
                     <button onClick={() => onStar?.(f)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" aria-label="Star">
                       <Star className={`size-4 ${f.starred ? "fill-warning text-warning" : ""}`} />
                     </button>
+                    {onRename && (
+                      <button
+                        onClick={() => {
+                          const next = window.prompt("Rename file", f.name);
+                          if (next != null) onRename(f, next);
+                        }}
+                        className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"
+                        aria-label="Rename"
+                      >
+                        <Pencil className="size-4" />
+                      </button>
+                    )}
                     <button onClick={() => onDownload?.(f)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" aria-label="Download">
                       <Download className="size-4" />
                     </button>
