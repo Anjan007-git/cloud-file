@@ -49,9 +49,24 @@ export function DashboardTopbar() {
       </button>
 
       {/* Upload */}
-      <button className="h-11 px-5 rounded-2xl bg-gradient-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 shadow-elegant hover:shadow-glow hover:opacity-95 transition-all">
-        <Upload className="size-4" /> Upload
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files?.length) upload(e.target.files);
+          e.target.value = "";
+        }}
+      />
+      <button
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        className="h-11 px-5 rounded-2xl bg-gradient-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 shadow-elegant hover:shadow-glow hover:opacity-95 transition-all disabled:opacity-60"
+      >
+        <Upload className="size-4" /> {uploading ? "Uploading…" : "Upload"}
       </button>
+
 
       {/* Profile dropdown */}
       <DropdownMenu>
