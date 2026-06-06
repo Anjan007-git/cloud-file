@@ -17,7 +17,7 @@ export function MarketingPage({ title, description, children }: { title: string;
       <main className="max-w-3xl mx-auto px-6 py-20">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{title}</h1>
         <p className="text-lg text-[#475569] mt-4 leading-relaxed">{description}</p>
-        <div className="mt-10 prose prose-slate max-w-none text-[#475569] leading-relaxed space-y-5">
+        <div className="mt-10 max-w-none text-[#475569] leading-relaxed space-y-5">
           {children ?? (
             <p>
               This page is part of the CloudFile product experience and will be expanded with full content in upcoming releases.
