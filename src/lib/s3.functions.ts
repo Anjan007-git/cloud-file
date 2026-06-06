@@ -44,6 +44,20 @@ export const getS3DownloadUrl = createServerFn({ method: "POST" })
     return { downloadUrl: url };
   });
 
+export const getS3PreviewUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { key: string }) => d)
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    if (!data.key.startsWith(`${userId}/`)) {
+      throw new Error("Forbidden");
+    }
+    const { client, bucket } = getS3();
+    const cmd = new GetObjectCommand({ Bucket: bucket, Key: data.key });
+    const url = await getSignedUrl(client, cmd, { expiresIn: 300 });
+    return { previewUrl: url };
+  });
+
 export const deleteS3Object = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { key: string }) => d)
