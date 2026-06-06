@@ -124,7 +124,7 @@ export function useFiles(filter: FilesFilter = "all") {
         toast.error(err instanceof Error ? err.message : "Upload failed");
       }
     },
-    [load],
+    [load, uploading],
   );
 
   const toggleStar = useCallback(
