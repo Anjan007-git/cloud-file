@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HardDrive, FileText, Image as ImageIcon, Film, File } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { useStorageStats, formatBytes, TOTAL_QUOTA_BYTES } from "@/hooks/useStorageStats";
 
 export const Route = createFileRoute("/storage")({
   head: () => ({ meta: [{ title: "Storage — CloudFile" }] }),
@@ -8,13 +9,15 @@ export const Route = createFileRoute("/storage")({
 });
 
 function StoragePage() {
-  const used = 0;
-  const total = 200;
+  const { stats } = useStorageStats();
+  const total = TOTAL_QUOTA_BYTES;
+  const used = stats.usedBytes;
+  const pct = Math.max((used / total) * 100, used > 0 ? 2 : 0);
   const categories = [
-    { label: "Documents", val: 0, c: "bg-primary", icon: FileText },
-    { label: "Images", val: 0, c: "bg-aqua", icon: ImageIcon },
-    { label: "Videos", val: 0, c: "bg-primary-glow", icon: Film },
-    { label: "Others", val: 0, c: "bg-muted-foreground/40", icon: File },
+    { label: "Documents", val: stats.byCategory.documents, c: "bg-primary", icon: FileText },
+    { label: "Images", val: stats.byCategory.images, c: "bg-aqua", icon: ImageIcon },
+    { label: "Videos", val: stats.byCategory.videos, c: "bg-primary-glow", icon: Film },
+    { label: "Others", val: stats.byCategory.others, c: "bg-muted-foreground/40", icon: File },
   ];
   return (
     <DashboardLayout title="Storage" description="Analyze your storage usage and upgrade when you need more space.">
@@ -24,9 +27,11 @@ function StoragePage() {
             <HardDrive className="size-5 text-primary" />
             <h2 className="font-semibold text-lg">Storage Usage</h2>
           </div>
-          <div className="text-3xl font-bold">{used} GB <span className="text-base font-medium text-muted-foreground">of {total} GB used</span></div>
+          <div className="text-3xl font-bold">
+            {formatBytes(used)} <span className="text-base font-medium text-muted-foreground">of {formatBytes(total)} used</span>
+          </div>
           <div className="h-2 rounded-full bg-muted mt-3 overflow-hidden">
-            <div className="h-full bg-gradient-primary" style={{ width: "2%" }} />
+            <div className="h-full bg-gradient-primary transition-all" style={{ width: `${pct}%` }} />
           </div>
           <div className="mt-6 grid sm:grid-cols-2 gap-3">
             {categories.map((c) => (
@@ -36,7 +41,7 @@ function StoragePage() {
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-semibold">{c.label}</div>
-                  <div className="text-xs text-muted-foreground">{c.val} GB</div>
+                  <div className="text-xs text-muted-foreground">{formatBytes(c.val)}</div>
                 </div>
               </div>
             ))}

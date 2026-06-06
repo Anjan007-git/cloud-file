@@ -14,6 +14,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useStorageStats, formatBytes, TOTAL_QUOTA_BYTES } from "@/hooks/useStorageStats";
 
 const mainNav = [
   { title: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
@@ -26,9 +27,8 @@ const mainNav = [
 
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const usedGb = 0;
-  const totalGb = 200;
-  const pct = (usedGb / totalGb) * 100;
+  const { stats } = useStorageStats();
+  const pct = (stats.usedBytes / TOTAL_QUOTA_BYTES) * 100;
   const [user, setUser] = useState<{ name: string; email: string; avatar?: string } | null>(null);
 
   useEffect(() => {
@@ -93,8 +93,8 @@ export function AppSidebar() {
           STORAGE
         </div>
         <div className="text-sm text-white/90 mb-2">
-          <span className="font-semibold">{usedGb} GB</span>
-          <span className="text-white/60"> of {totalGb} GB used</span>
+          <span className="font-semibold">{formatBytes(stats.usedBytes)}</span>
+          <span className="text-white/60"> of {formatBytes(TOTAL_QUOTA_BYTES)} used</span>
         </div>
         <div className="h-1.5 rounded-full bg-white/15 overflow-hidden">
           <div
