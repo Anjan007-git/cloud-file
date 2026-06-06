@@ -29,7 +29,18 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 const stats = [
-...
+  { label: "Total Files", value: "0", sub: "Start uploading", icon: FolderOpen, tint: "bg-primary/10 text-primary" },
+  { label: "Storage Used", value: "0 GB", sub: "of 200 GB", icon: CloudUpload, tint: "bg-aqua/20 text-aqua-foreground" },
+  { label: "Shared Files", value: "0", sub: "No shares yet", icon: Users, tint: "bg-accent/60 text-accent-foreground" },
+  { label: "Downloads", value: "0", sub: "This week", icon: Download, tint: "bg-warning/15 text-foreground" },
+];
+
+const quickActions = [
+  { title: "Upload Files", sub: "Drag and drop files", icon: CloudUpload, color: "text-primary bg-primary/10" },
+  { title: "New Folder", sub: "Create a new folder", icon: FolderPlus, color: "text-aqua-foreground bg-aqua/20" },
+  { title: "Share Files", sub: "Share with others", icon: Share2, color: "text-foreground bg-accent/60" },
+  { title: "Storage Settings", sub: "Manage your storage", icon: Settings, color: "text-foreground bg-muted" },
+];
 function DashboardPage() {
   const { user } = useCurrentUser();
   const used = 0;
