@@ -93,8 +93,8 @@ export function AppSidebar() {
           STORAGE
         </div>
         <div className="text-sm text-white/90 mb-2">
-          <span className="font-semibold">{usedGb} GB</span>
-          <span className="text-white/60"> of {totalGb} GB used</span>
+          <span className="font-semibold">{formatBytes(stats.usedBytes)}</span>
+          <span className="text-white/60"> of {formatBytes(TOTAL_QUOTA_BYTES)} used</span>
         </div>
         <div className="h-1.5 rounded-full bg-white/15 overflow-hidden">
           <div
