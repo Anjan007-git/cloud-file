@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Shield, Share2, RefreshCw, Check, ArrowRight, Lock, History, Users, Search, Globe,
   Server, ChevronDown, Menu, X, Github, Linkedin, Twitter, Sparkles, CheckCircle2,
-  HardDrive, KeyRound, Link2, ShieldCheck, Eye, Activity, FolderUp, Settings2,
+  HardDrive, KeyRound, Link2, ShieldCheck, Eye,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
