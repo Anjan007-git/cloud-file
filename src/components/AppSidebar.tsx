@@ -10,9 +10,9 @@ import {
   Settings,
   HelpCircle,
   LogOut,
-  Cloud,
   ChevronDown,
 } from "lucide-react";
+import logoMark from "@/assets/cloudfile-logo-v2.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 import { useStorageStats, formatBytes, TOTAL_QUOTA_BYTES } from "@/hooks/useStorageStats";
 
@@ -58,13 +58,13 @@ export function AppSidebar() {
 
   return (
     <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-gradient-sidebar text-sidebar-foreground p-5 gap-5 sticky top-0 h-screen">
-      <Link to="/dashboard" className="flex items-center gap-2.5 px-1">
-        <div className="size-10 rounded-xl bg-white/15 backdrop-blur grid place-items-center shadow-glow">
-          <Cloud className="size-5 text-white" />
+      <Link to="/dashboard" className="flex items-center gap-3 px-1 py-1 group">
+        <div className="size-11 rounded-xl bg-white grid place-items-center shadow-glow overflow-hidden transition-transform duration-300 group-hover:scale-105">
+          <img src={logoMark.url} alt="CloudFile" className="size-9" />
         </div>
         <div className="leading-tight">
-          <div className="font-bold text-base">CloudFile</div>
-          <div className="text-xs text-white/70">Manager</div>
+          <div className="font-bold text-base tracking-tight">CloudFile</div>
+          <div className="text-[11px] text-white/70 tracking-wide">Enterprise Cloud</div>
         </div>
       </Link>
 
