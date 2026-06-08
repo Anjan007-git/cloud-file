@@ -6,12 +6,12 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// Outside the Lovable sandbox, the Lovable config skips the Nitro deploy plugin
-// unless we pass an explicit `nitro` option. For Vercel (and any other non-Lovable
-// build host), force-enable Nitro with the Vercel preset so the build emits
-// .vercel/output (Build Output API v3) where Vercel can serve SSR + assets.
-// Inside the Lovable sandbox, leave it untouched so the default Cloudflare
-// preset continues to power the live preview.
+// Outside the Lovable sandbox, the Lovable Vite wrapper skips Nitro unless we
+// pass an explicit `nitro` option. That wrapper also defaults Nitro output back
+// to dist/, so we must override the output directories as well as the preset or
+// Vercel never receives a valid `.vercel/output` bundle to serve.
+// Inside the Lovable sandbox, leave it untouched so the preview keeps using the
+// default sandbox target.
 const isLovableSandbox =
   process.env.LOVABLE_SANDBOX === "1" || !!process.env.DEV_SERVER__PROJECT_PATH;
 
@@ -25,6 +25,11 @@ export default defineConfig({
     : {
         nitro: {
           preset: "vercel",
+          output: {
+            dir: ".vercel/output",
+            serverDir: ".vercel/output/functions/__server.func",
+            publicDir: ".vercel/output/static",
+          },
         },
       }),
 });
