@@ -155,7 +155,7 @@ function DashboardPage() {
                 <h2 className="font-semibold text-base mb-4">Quick Actions</h2>
                 <div className="space-y-1.5">
                   {quickActions.map((a) => (
-                    <button key={a.title} onClick={a.onClick} className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted transition-colors text-left">
+                    <button type="button" key={a.title} onClick={a.onClick} className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted transition-colors text-left">
                       <div className={`size-9 rounded-lg grid place-items-center ${a.color}`}>
                         <a.icon className="size-[16px]" />
                       </div>
