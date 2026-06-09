@@ -142,7 +142,7 @@ function DashboardPage() {
                     <p className="text-xs text-muted-foreground mt-1 max-w-xs">
                       Upload your first file to start organizing your cloud storage.
                     </p>
-                    <button onClick={() => inputRef.current?.click()} className="mt-5 px-4 h-9 rounded-lg bg-primary text-primary-foreground font-semibold text-sm inline-flex items-center gap-2">
+                    <button type="button" onClick={() => inputRef.current?.click()} className="mt-5 px-4 h-9 rounded-lg bg-primary text-primary-foreground font-semibold text-sm inline-flex items-center gap-2">
                       <Upload className="size-4" /> Upload a file
                     </button>
                   </div>
