@@ -62,6 +62,7 @@ function FilesPage() {
           />
         </div>
         <button
+          type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
           className="h-10 px-4 rounded-xl bg-gradient-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 shadow-elegant disabled:opacity-60"
@@ -87,7 +88,7 @@ function FilesPage() {
       >
         <p className="text-sm text-muted-foreground">
           Drag & drop files here, or{" "}
-          <button onClick={() => inputRef.current?.click()} className="text-primary font-semibold hover:underline">
+          <button type="button" onClick={() => inputRef.current?.click()} className="text-primary font-semibold hover:underline">
             browse
           </button>
         </p>

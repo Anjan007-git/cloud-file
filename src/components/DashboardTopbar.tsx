@@ -55,6 +55,7 @@ export function DashboardTopbar() {
           }}
         />
         <button
+          type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
           className="h-10 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-60 shadow-sm"
