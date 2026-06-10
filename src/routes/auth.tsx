@@ -21,7 +21,6 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,19 +32,6 @@ function AuthPage() {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
-
-  const handleGoogle = async () => {
-    setError(null);
-    setGoogleLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin + "/dashboard" },
-    });
-    if (error) {
-      setError(error.message ?? "Google sign-in failed");
-      setGoogleLoading(false);
-    }
-  };
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
