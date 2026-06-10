@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Chrome, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/auth")({
@@ -21,6 +22,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -59,6 +61,23 @@ function AuthPage() {
     }
   };
 
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    setError(null);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setError("Google sign-in failed. Please try again.");
+      setGoogleLoading(false);
+      return;
+    }
+    if (result.redirected) {
+      return;
+    }
+    setGoogleLoading(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-6">
       <div className="w-full max-w-md">
@@ -77,6 +96,21 @@ function AuthPage() {
             {mode === "signin" ? "Sign in to access your files." : "Get 200 GB of secure cloud storage, free."}
           </p>
 
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={googleLoading}
+            className="w-full h-11 rounded-xl border border-border bg-background font-semibold text-sm hover:bg-accent transition-colors disabled:opacity-60 flex items-center justify-center gap-2 mt-5"
+          >
+            {googleLoading ? <Loader2 className="size-4 animate-spin" /> : <Chrome className="size-4" />}
+            Continue with Google
+          </button>
+
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted-foreground">or</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
 
           <form onSubmit={handleEmail} className="space-y-3.5">
             {mode === "signup" && (
