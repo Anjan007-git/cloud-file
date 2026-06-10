@@ -96,6 +96,21 @@ function AuthPage() {
             {mode === "signin" ? "Sign in to access your files." : "Get 200 GB of secure cloud storage, free."}
           </p>
 
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={googleLoading}
+            className="w-full h-11 rounded-xl border border-border bg-background font-semibold text-sm hover:bg-accent transition-colors disabled:opacity-60 flex items-center justify-center gap-2 mt-5"
+          >
+            {googleLoading ? <Loader2 className="size-4 animate-spin" /> : <Chrome className="size-4" />}
+            Continue with Google
+          </button>
+
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted-foreground">or</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
 
           <form onSubmit={handleEmail} className="space-y-3.5">
             {mode === "signup" && (
