@@ -61,6 +61,23 @@ function AuthPage() {
     }
   };
 
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    setError(null);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setError("Google sign-in failed. Please try again.");
+      setGoogleLoading(false);
+      return;
+    }
+    if (result.redirected) {
+      return;
+    }
+    setGoogleLoading(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-6">
       <div className="w-full max-w-md">
